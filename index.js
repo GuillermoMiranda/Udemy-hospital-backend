@@ -18,15 +18,13 @@ app.use(cors());
 //hago la conexion a la BD, ejecuntando la funcion
 dbConnection()
 
+//lectura y parseo del body . ESTO TIENE QUE COLOCARSE ANTES DE LAS RUTAS PORQUE SINO NO PODRIA LELER NADA SI LO PINGO DESPUES.
+app.use(express.json())
 
+//rutas (hace referencia a las rutas definidas en routes/xxxx.js)
+app.use('/api/usuarios', require('./routes/usuarios'))
+app.use('/api/login', require('./routes/auth'))
 
-//rutas
-app.get( '/', (req, res)=>{
-    res.json({
-        ok: true,
-        msg: 'Hola Mundo'
-    });
-})
 
 
 //levantar servidor. Uso la varible de entorno PORT
