@@ -15,11 +15,33 @@ const { generarJWT } = require('../helpers/jwt');
 //esta funcion getUsuarios es llamada desde la ruta que hace el GET a los usuarios.
 const getUsuarios = async (req, res) => {
 
-    const usuarios = await Usuario.find({}, 'nombre email role google '); //aca le estoy diciendo que me traiga todos los usuarios, porque no estoy definiendo el primer paramatero para el find. Como segundo parametro definido cuales son los campos que quiero que me traiga Como debe ir a la BD, debe ser con un await.
+    //para hacer el getUsuario, dado que tengo muchos usuario, voyt a definir parametros que se pueden pasr por el query.params como a partir de que registro quiero ver, que lo definnire como "desde".
+    const desde = Number(req.query.desde) || 0 //el desde que va en los query es porque le estoy diciendo que vaya a buscar el "desde" en el url, eso sera lo que asignara, como numero  en la cosntante desde
+
+    /* /////////////////////////    const usuarios = await Usuario.find({}, 'nombre email role google ') //aca le estoy diciendo que me traiga todos los usuarios, porque no estoy definiendo el primer paramatero para el find. Como segundo parametro definido cuales son los campos que quiero que me traiga Como debe ir a la BD, debe ser con un await.
+                                   .skip(desde) //aca le paso el desde, y le digo que no me muestre los primero 5 registros
+                                   .limit( 5 ) //ac ale digo como como limite me muestre 5 resultadops por pagina
+
+    //voy a pderi el total de registros que haya, y 
+    const total = await Usuario.count() ///////////////// */
+
+    //ESTO DE ARRIBA QUE ESTA COMENTADO HACE 2 AWAIT CONSECUTIVOS, LO QUE ES INIFECIENTE, PORQUE SI SE DEMORAN AMBOS EL PROCESO SERA LENTO. ENTONCES LO que HAY QUE HACER ES CORRER ESTOS PROCESOS ASINCRONOS DE MANERA PARALELA, PARA ESO SE USA EL PROMISE.ALL QUE RESUELVE UNA PROMESA, CUANDO TODAS LAS PROMESAS INCLUIDAS EN EL PROMISE.ALL SE RESULVEN ESTE PROMISE.ALL DEVUELVE UN ARREGLO CON EL RESULTADO DE CADA PROMESA QUE TENIA INCLUIDA COMO ELEMENTOS.
+
+    const [usuarios, total] =  await Promise.all([
+        Usuario.find({}, 'nombre email role google img ') //le paso como primer promesa el await que me traera los usuario
+                .skip(desde) 
+                .limit( 5 ) ,
+
+        Usuario.countDocuments() //le paso como segunda promesa el await que me traera la cantidad de registros.
+    ])
+    //como estoy haciendo la desestructuracion del arreglo que me devuelve el Promise.all seguire teniendo "usuarios" y "total" por separado
+
+
     res.json({
         ok: true,
         users: usuarios,
-        //uid: req.uid //aca extraigo del req el uid. Esto viene de middleare persoalizado (validar-jwt) que estoy corriendo en la ruta de getusuario, ya que lo mando como dato. Este seria el UID del usuario que hizo la peticion.
+        total
+        //uid: req.uid //aca extraigo del req el uid. Esto viene de middleare persoalizado (validar-jwt) que estoy corriendo en la ruta de getusuario, ya que lo mando como dato. Este seria el UID del usuario que creo el usuario.
     });
 } 
 
