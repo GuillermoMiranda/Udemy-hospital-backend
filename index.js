@@ -18,6 +18,10 @@ app.use(cors());
 //hago la conexion a la BD, ejecuntando la funcion
 dbConnection()
 
+//directorio publico. Esto sera la parte publica de mi aplicacion. Aca defino o indico cual es la carpeta que sera publica
+app.use(express.static('public'));
+
+
 //lectura y parseo del body . ESTO TIENE QUE COLOCARSE ANTES DE LAS RUTAS PORQUE SINO NO PODRIA LELER NADA SI LO PINGO DESPUES.
 app.use(express.json())
 
