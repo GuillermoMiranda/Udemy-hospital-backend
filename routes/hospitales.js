@@ -30,11 +30,15 @@ router.post('/', //url
 //para actualizar un usuario con un put, le debo mandar el id
 router.put('/:id', 
         [
-            
+        validarJWT,
+        check('nombre', 'El nombre del Hospital es obligatorio').not().isEmpty(),
+        validarCampos //valir campo valida todos los check que haya puesto y muestra los errores encaso que hubiese
         ],
         actualizarHospital );
 
-router.delete('/:id',  borrarHospital )
+router.delete('/:id',
+        validarJWT,
+        borrarHospital )
 
 
 

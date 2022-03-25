@@ -16,11 +16,8 @@ const googleVerify = async (token)=> {
       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
   });
   const payload = ticket.getPayload();
-  const userid = payload['sub'];
-  // If request specified a G Suite domain:
+    // If request specified a G Suite domain:
   // const domain = payload['hd'];
-
-  console.log(payload)
 
   ///el payload del token de google trae mucha informacion. Yo de ahi solo necesityo algunos datos, por eso hago la desestructuracion y saco los datos que me interesan para hacer el login de mi aplicacion y lo retorno
 

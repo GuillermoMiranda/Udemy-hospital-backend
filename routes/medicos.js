@@ -32,11 +32,16 @@ router.post('/', //url
 //para actualizar un medico con un put, le debo mandar el id
 router.put('/:id', 
         [
-            
+                validarJWT,
+                check('nombre', 'El nombre del Medico es obligatorio').not().isEmpty(),
+                check('hospital', 'El ID del hospital debe ser valido').isMongoId(), 
+                validarCampos //valir campo valida todos los check que haya puesto y muestra los errores encaso que hubiese 
         ],
         actualizarMedico );
 
-router.delete('/:id',  borrarMedico )
+router.delete('/:id', 
+                validarJWT,
+                borrarMedico )
 
 
 

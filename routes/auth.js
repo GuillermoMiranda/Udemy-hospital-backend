@@ -6,8 +6,9 @@ Raiz de esta ruta: /api/login
  */
 const { Router } = require('express');
 const { check } = require('express-validator');
-const{ login, googleSignIn } = require('../controllers/auth');
+const{ login, googleSignIn, renewToken } = require('../controllers/auth');
 const { validarCampos } = require('../middlewares/validar-campos');
+const { validarJWT } = require('../middlewares/validar-jwt');
 
 //iniciliza la ruta
 const router = Router();
@@ -26,5 +27,11 @@ router.post('/google', [
 
     ],
     login)
+
+//se generara una ruta en donde se hara la renovacion o vlaidacion cuando se esten por vencer el token del usuario
+router.get('/renew', [
+    validarJWT
+    ],
+    renewToken)
 
 module.exports = router ;
