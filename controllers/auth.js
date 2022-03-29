@@ -95,14 +95,15 @@ const googleSignIn = async(req, res=response)=>{
             ok: true,
             msg:'Google SigIn',
             token
-        })
+        });
     } catch (error) {
         
-    }
+    
         res.status(401).json({
                 ok: false,
                 msg:'Token invalido'
             })
+    }
 }
 
 //voy a hacer el controlador para hacer el renew del token. En este punto ya tengo el uid del usuario, porque ya tengo un token generado y valiido que se esta por vencer
@@ -113,11 +114,15 @@ const renewToken = async(req, res=response)=>{
     //en este punto, ya se valido todo, por eso hay que GENERAR UN TOKEN
     const token = await generarJWT( uid ) //aca pongo "id", porque mongo va a saber que estoy haciendo referencia al id de ese documento. Como defini el generarJWT como una promesa, le debo poner el await
 
+    //obtener usuario por ID
+    const usuario = await Usuario.findById(uid)
+
     //en este punto, dado que estyo logueado ya tengo un token nuevo. Es decir, desde el BODY mandare un token (que lo necesita el middleware generarJWT) y lo que tendre sera un token nuevo que tendra una fecha de expiracion nueva
 
     res.json({
         ok: true,
-        token
+        token,
+        usuario
     })
 }
 
