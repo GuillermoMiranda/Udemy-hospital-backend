@@ -127,8 +127,21 @@ const actualizarUsuario = async (req, res = response) => {
                 })
             }
         }
-        //debo aniadir el email a los campos, dado que si lo quieren modificar y paso la validacion anterior si debe viajar al backend
-        campos.email = email;
+        
+        
+        //debo agragr la validacion de que si estoy logueado con un usuario de google no deberia permitir cambiar al mail. Si bien se puso una validacion en el frontend haciendo ese campo como solo de lectura, debo hacerlo por backend tambien
+
+        if ( !usuarioDB.google) { //si no es un usuario de google podre actualziar el mail
+            //debo aniadir el email a los campos, dado que si lo quieren modificar y paso la validacion anterior si debe viajar al backend
+            campos.email = email;
+        } else if ( usuarioDB.email !== email){ //si esta bloqueado en el frontend esto no deberia pasar, pero si el desarrollador de frontend se olvida de poner el campo como solo lectura, y el usuario SI es de google y el campo que me estan cargando (email) no es igual al email que tiene cargado el usuareio, deberia mostrar un msj de error
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuarios de google no pueden cambiar sus correos'
+            })
+
+        }
+
         //ahora le paso todos los campos que se podrian actualizar en donde no estaran ni google ni password
         const usuarioActualizado =  await Usuario.findByIdAndUpdate( uid, campos, {new: true}) //como primer parametro se pasa el id del usuariop que quiero actualizar y como segundo parametro elos campos que quiero actualizar, que es de donde saque el password y el google.
 
