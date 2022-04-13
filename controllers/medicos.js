@@ -1,6 +1,32 @@
-const { response } = require('express')
+const { response } = require('express');
+const { IdTokenClient } = require('google-auth-library');
 const Medico = require('../models/medico')
 
+const getMedicoById = async(req, res = response)=>{
+
+    //tengo que sacar el id del medico que quiero obtener, del url
+    const id = req.params.id;
+
+    try {
+        
+        const medico = await Medico.findById(id)
+                                .populate('usuario', 'nombre img')
+                                .populate('hospital', 'nombre')
+        res.json({
+            ok: true,
+            medico
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrador'
+        })
+    }
+    
+}
+
+//controller para obtener el listado de medicos
 const getMedicos = async(req, res = response)=>{
 
     
@@ -135,5 +161,6 @@ module.exports = {
     getMedicos,
     crearMedico,
     actualizarMedico,
-    borrarMedico
+    borrarMedico,
+    getMedicoById
 }

@@ -7,7 +7,7 @@ Raiz de esta ruta: /api/medicos
 const { Router } = require('express')
 
 const { check } = require('express-validator')
-const { getMedicos, crearMedico, actualizarMedico, borrarMedico } = require('../controllers/medicos')
+const { getMedicos, crearMedico, actualizarMedico, borrarMedico, getMedicoById } = require('../controllers/medicos')
 
 const { validarCampos } =  require('../middlewares/validar-campos')
 const { validarJWT } = require('../middlewares/validar-jwt')
@@ -43,6 +43,7 @@ router.delete('/:id',
                 validarJWT,
                 borrarMedico )
 
-
+//esta ruta es para obtener un medico en particular pasando el ID del medico.
+router.get('/:id', validarJWT, getMedicoById )
 
 module.exports = router
