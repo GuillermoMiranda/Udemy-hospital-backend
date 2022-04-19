@@ -8,7 +8,7 @@ const { Router } = require('express')
 const { getUsuarios, crearUsuario, actualizarUsuario, borrarUsuario } = require('../controllers/usuarios')
 const { check } = require('express-validator')
 const { validarCampos } =  require('../middlewares/validar-campos')
-const { validarJWT } = require('../middlewares/validar-jwt')
+const { validarJWT, validarADMIN_ROLE, validarADMIN_ROLE_o_MismoUsuario  } = require('../middlewares/validar-jwt')
 
 //iniciliza la ruta
 const router = Router()
@@ -32,6 +32,7 @@ router.post('/', //url
 router.put('/:id', 
         [
             validarJWT, //valido el JWT antes, de manera que si no viene ya salga y no procese nada
+            validarADMIN_ROLE_o_MismoUsuario , //valido que tenga roles de ADMIN_ROLE, o que es caso de ser el propio usuario lo deje modificar su propio perfil y no el de otro.
             check( 'nombre', 'El nombre es obligatorio' ).not().isEmpty(), //valido que el campo nombre no este vacio
             check( 'email', 'El email es obligatorio' ).isEmail(), //valido que el campo email sea un email
             check( 'role', 'El role es obligatorio' ).not().isEmpty(),
@@ -41,7 +42,7 @@ router.put('/:id',
         ],
         actualizarUsuario );
 
-router.delete('/:id', validarJWT, borrarUsuario )
+router.delete('/:id', [ validarJWT, validarADMIN_ROLE], borrarUsuario )
 
 
 

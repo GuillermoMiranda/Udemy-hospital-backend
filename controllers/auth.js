@@ -3,7 +3,9 @@ const bcrypt = require('bcryptjs');
 const {response} = require('express');
 const { generarJWT } = require('../helpers/jwt');
 const Usuario = require('../models/usuario')
-const { googleVerify } =  require('../helpers/google-verify')
+const { googleVerify } =  require('../helpers/google-verify');
+//const usuario = require('../models/usuario');
+const { getMenuFrontEnd } = require('../helpers/menu-frontend');
 
 const login = async (req, res = response)=>{
 
@@ -39,10 +41,12 @@ const login = async (req, res = response)=>{
         //en este punto, ya se valido todo, por eso hay que GENERAR UN TOKEN
         const token = await generarJWT( usuarioDB.id) //aca pongo "id", porque mongo va a saber que estoy haciendo referencia al id de ese documento. Como defini el generarJWT como una promesa, le debo poner el await
         
+        //en esta respuesta se agrega la parte en que mando el SideBarMenu desde el backend que lo tengo como una funcion a la que debo apsarle el role del usaurio
         res.status(200).json({
             ok: true,
-            token
-        })
+            token,
+            menu: getMenuFrontEnd( usuarioDB.role)
+        });
 
     } catch (error) {
         console.log(error)
@@ -94,7 +98,8 @@ const googleSignIn = async(req, res=response)=>{
         res.json({
             ok: true,
             msg:'Google SigIn',
-            token
+            token,
+            menu: getMenuFrontEnd( usuario.role)
         });
     } catch (error) {
         
@@ -122,7 +127,8 @@ const renewToken = async(req, res=response)=>{
     res.json({
         ok: true,
         token,
-        usuario
+        usuario,
+        menu: getMenuFrontEnd( usuario.role)
     })
 }
 
